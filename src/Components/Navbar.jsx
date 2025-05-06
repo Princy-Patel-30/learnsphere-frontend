@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { useAuth } from '../Context/AuthContext';
 
 const Navbar = () => {
@@ -14,9 +14,8 @@ const Navbar = () => {
   ];
 
   const instructorLinks = [
-    { label: 'Created Courses', path: '/instructor/courses' },
-    { label: 'Update Course', path: '/instructor/update-course' },
-    { label: 'Analytics Dashboard', path: '/instructor/analytics' },
+    { label: 'Created Courses', path: '/InstructorDashboard' },
+    { label: 'Analytics Dashboard', path: '/AnalyticsDashboard' },
   ];
 
   const linksToRender = user?.role === 'INSTRUCTOR' ? instructorLinks : studentLinks;
@@ -24,7 +23,6 @@ const Navbar = () => {
   return (
     <nav className="bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="text-white text-xl font-bold">
           LearnSphere
         </Link>
@@ -33,17 +31,13 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-8 text-white">
           {user &&
             linksToRender.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className="hover:underline transition"
-              >
+              <Link key={link.path} to={link.path} className="hover:underline transition">
                 {link.label}
               </Link>
             ))}
         </div>
 
-        {/* Auth & Avatar */}
+        {/* Auth Buttons / Avatar */}
         <div className="hidden md:flex items-center space-x-4">
           {!user ? (
             <>
@@ -83,16 +77,13 @@ const Navbar = () => {
 
         {/* Mobile Toggle */}
         <div className="md:hidden">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white"
-          >
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
             {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Dropdown Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden mt-3 space-y-2 text-white px-4">
           {user &&
@@ -135,7 +126,7 @@ const Navbar = () => {
               >
                 Logout
               </button>
-              <div className="w-8 h-8 rounded-full border-2 border-white  flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
                 {isLoading ? (
                   <span className="text-white text-sm">...</span>
                 ) : (

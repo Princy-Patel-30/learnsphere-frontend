@@ -1,12 +1,11 @@
   import React, { useState } from 'react';
   import { useForm } from 'react-hook-form';
   import { useAuth } from '../Context/AuthContext';
-  import { useNavigate } from 'react-router-dom';
   import { toast } from 'react-toastify';
 
   const Login = () => {
     const { handleLogin } = useAuth();
-    const navigate = useNavigate();
+
     const [googleLoading, setGoogleLoading] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
 

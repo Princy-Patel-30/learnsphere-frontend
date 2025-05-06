@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useInstructor } from '../Context/InstructorContext';
 import SessionForm from './SessionForm';
 import RichTextEditor from './RichTextEditor';
 
 const CreateCourse = () => {
-  const { submitCourse } = useInstructor();
+  const { submitCourse, handleUpdateCourse } = useInstructor();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isUpdate = !!location.state?.course;
 
-  const { register, control, handleSubmit, formState: { errors } } = useForm({
+  const { register, control, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       title: '',
       description: '<p></p>',
@@ -27,6 +29,22 @@ const CreateCourse = () => {
     name: 'sessions',
   });
 
+  useEffect(() => {
+    if (isUpdate) {
+      const { course } = location.state;
+      reset({
+        title: course.title,
+        description: course.description,
+        category: course.category,
+        sessions: course.sessions.map(session => ({
+          title: session.title,
+          videoUrl: session.videoUrl,
+          content: session.explanation,
+        })),
+      });
+    }
+  }, [location.state, reset]);
+
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
@@ -41,12 +59,17 @@ const CreateCourse = () => {
         })),
       };
 
-      await submitCourse(payload);
-      toast.success('Course created successfully!');
+      if (isUpdate) {
+        await handleUpdateCourse(location.state.course.id, payload);
+        toast.success('Course updated successfully!');
+      } else {
+        await submitCourse(payload);
+        toast.success('Course created successfully!');
+      }
       navigate('/instructordashboard');
     } catch (err) {
-      console.error('Course creation error:', err);
-      toast.error(err.response?.data?.message || 'Course creation failed. Please try again.');
+      console.error('Course operation error:', err);
+      toast.error(err.response?.data?.message || `Course ${isUpdate ? 'update' : 'creation'} failed. Please try again.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -57,7 +80,7 @@ const CreateCourse = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-xl">
       <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
-        Create New Course
+        {isUpdate ? 'Update Course' : 'Create New Course'}
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -151,7 +174,7 @@ const CreateCourse = () => {
                 : 'bg-green-600 hover:bg-green-700'
             }`}
           >
-            {isSubmitting ? 'Creating...' : 'Create Course'}
+            {isSubmitting ? (isUpdate ? 'Updating...' : 'Creating...') : (isUpdate ? 'Update Course' : 'Create Course')}
           </button>
         </div>
       </form>

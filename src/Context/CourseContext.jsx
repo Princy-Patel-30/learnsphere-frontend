@@ -6,7 +6,11 @@ import {
   getCourseSessions,
   enrollInCourse as apiEnroll,
   markSessionComplete,
-  getCourseProgress
+  getCourseProgress,
+  createRating,
+  getCourseRatings,
+  addCommentToRating,
+  getCommentsForRating
 } from '../Services/courseService';
 
 const CourseContext = createContext();
@@ -17,9 +21,13 @@ export const CourseProvider = ({ children }) => {
   const [courseDetails, setCourseDetails] = useState({});
   const [courseSessions, setCourseSessions] = useState({});
   const [sessionProgress, setSessionProgress] = useState({});
+  const [courseRatings, setCourseRatings] = useState({});
+  const [ratingComments, setRatingComments] = useState({});
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Course-related fetch functions (existing)...
 
   const fetchEnrolledCourses = async () => {
     if (enrolledCourses.length > 0) return enrolledCourses;
@@ -92,13 +100,13 @@ export const CourseProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const markAsComplete = async (sessionId) => {
     try {
       await markSessionComplete(sessionId);
       const courses = await fetchEnrolledCourses();
-      setEnrolledCourses(courses); 
+      setEnrolledCourses(courses);
     } catch (err) {
       throw err;
     }
@@ -106,7 +114,49 @@ export const CourseProvider = ({ children }) => {
 
   const enrollInCourse = async (courseId) => {
     await apiEnroll(courseId);
-    setEnrolledCourses([]); // Refetch fresh data later
+    setEnrolledCourses([]);
+  };
+
+  // ============================
+  // ⭐ Ratings and Comments Logic
+  // ============================
+
+  const fetchRatingsForCourse = async (courseId) => {
+    setLoading(true);
+    try {
+      const data = await getCourseRatings(courseId);
+      setCourseRatings((prev) => ({ ...prev, [courseId]: data }));
+      return data;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitRating = async (courseId, stars, review) => {
+    await createRating(courseId, stars, review);
+    await fetchRatingsForCourse(courseId); // Refresh ratings
+  };
+
+  const fetchCommentsForRating = async (ratingId) => {
+    setLoading(true);
+    try {
+      const data = await getCommentsForRating(ratingId);
+      setRatingComments((prev) => ({ ...prev, [ratingId]: data }));
+      return data;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitComment = async (ratingId, content) => {
+    await addCommentToRating(ratingId, content);
+    await fetchCommentsForRating(ratingId); // Refresh comments
   };
 
   const value = useMemo(() => ({
@@ -115,6 +165,8 @@ export const CourseProvider = ({ children }) => {
     courseDetails,
     courseSessions,
     sessionProgress,
+    courseRatings,
+    ratingComments,
     loading,
     error,
     fetchEnrolledCourses,
@@ -126,11 +178,18 @@ export const CourseProvider = ({ children }) => {
     enrollInCourse,
     activeSessionId,
     setActiveSessionId,
+    fetchRatingsForCourse,
+    submitRating,
+    fetchCommentsForRating,
+    submitComment
   }), [
     enrolledCourses,
     publishedCourses,
     courseDetails,
     courseSessions,
+    sessionProgress,
+    courseRatings,
+    ratingComments,
     loading,
     error,
     activeSessionId

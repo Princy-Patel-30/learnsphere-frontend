@@ -12,7 +12,7 @@ const SelectRole = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const updatedUser = await updateRole(selectedRole);
+      const updatedUser = await updateRole(selectedRole.toUpperCase());
       setUser(updatedUser);
       navigate(selectedRole === 'instructor' ? '/InstructorDashboard' : '/StudentDashboard');
     } catch (error) {

@@ -14,6 +14,11 @@ export const logout = async () => {
   await api.post('/auth/logout', {}, { withCredentials: true });
 };
 
+export const updateUserRole = async (role) => {
+    const response = await api.put('/auth/update-role', { role }); 
+    return response.data;
+  };
+
 export const fetchUser = async () => {
   const res = await api.get('/auth/refresh-token', { withCredentials: true });
   return res.data;

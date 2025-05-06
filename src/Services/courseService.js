@@ -35,3 +35,30 @@ export const markSessionComplete = async (sessionId) => {
   return response.data;
 };
 
+export const createRating = async (courseId, stars, review) => {
+    const response = await api.post(
+      `/student/courses/${courseId}/rate`,
+      { stars, review },
+      { withCredentials: true }
+    );
+    return response.data;
+  };
+  
+  export const getCourseRatings = async (courseId) => {
+    const response = await api.get(`/student/courses/${courseId}/ratings`);
+    return response.data;
+  };
+  
+  export const addCommentToRating = async (ratingId, content) => {
+    const response = await api.post(
+      `/student/ratings/${ratingId}/comment`,
+      { content },
+      { withCredentials: true }
+    );
+    return response.data;
+  };
+  
+  export const getCommentsForRating = async (ratingId) => {
+    const response = await api.get(`/student/ratings/${ratingId}/comments`);
+    return response.data;
+  };

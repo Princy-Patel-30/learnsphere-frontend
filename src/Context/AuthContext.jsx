@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { registerUser, login, logout, fetchUser } from '../Services/authService';
+import { registerUser, login, logout, fetchUser, updateUserRole } from '../Services/authService';
 
 const AuthContext = createContext();
 
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const getUser = async () => {
       try {
         const data = await fetchUser();
-        setUser(data);
+        setUser(data.user); // Normalize user shape
       } catch (error) {
         if (error.response?.status === 401) {
           setUser(null);
@@ -41,13 +41,15 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = async (data) => {
     try {
-      const userData = await login(data);
+      const response = await login(data);
+      const userData = response.user;
       setUser(userData);
       toast.success('Login successful');
-      const role = userData.user.role;
-      if (role === 'INSTRUCTOR') navigate('/InstructorDashboard');
-      else if (role === 'STUDENT') navigate('/StudentDashboard');
+
+      if (userData.role === 'INSTRUCTOR') navigate('/InstructorDashboard');
+      else if (userData.role === 'STUDENT') navigate('/StudentDashboard');
       else navigate('/select-role');
+
       return userData;
     } catch (error) {
       toast.error('Login failed');
@@ -66,7 +68,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const value = useMemo(() => ({ user, isLoading, handleRegister, handleLogin, handleLogout, setUser }), [user, isLoading]);
+  const updateRole = async (role) => {
+    try {
+      const response = await updateUserRole(role); 
+      setUser(response.user); 
+      toast.success('Role updated successfully');
+      return response.user;
+    } catch (error) {
+      toast.error('Failed to update role');
+      throw error;
+    }
+  };
+  
+
+  const value = useMemo(
+    () => ({
+      user,
+      isLoading,
+      handleRegister,
+      handleLogin,
+      handleLogout,
+      setUser,
+      updateRole
+    }),
+    [user, isLoading]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -16,6 +16,7 @@ import InstructorDashboard from './Components/InstructorDashboard';
 import SelectRole from './Components/SelectRole';
 import LandingPage from './Components/Landing';
 import DashboardProtectedRoute from './ProtectedRoutes/DashboardProtectedRoute';
+import ViewAnalysis from './Components/ViewAnalysis';
 function App() {
   return (
     <>
@@ -50,6 +51,7 @@ function App() {
             <Route path="/select-role" element={<SelectRole/>} />
             <Route path = '/landing' element={<LandingPage/>}/>
             <Route path="/create-course" element={<CreateCourse />} />
+            <Route path = "/AnalyticsDashboard" element = {<ViewAnalysis/>}/>
           </Routes>
         </main>
       </div>

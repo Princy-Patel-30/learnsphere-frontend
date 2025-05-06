@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import { getInstructorCourses, createCourse, deleteCourse } from '../Services/instructorService';
+import { getInstructorCourses, createCourse, deleteCourse, updateCourse } from '../Services/instructorService';
 import React from 'react';
+
 const InstructorContext = createContext();
 
 export const InstructorProvider = ({ children }) => {
@@ -41,6 +42,16 @@ export const InstructorProvider = ({ children }) => {
     }
   };
 
+  const handleUpdateCourse = async (courseId, courseData) => {
+    try {
+      await updateCourse(courseId, courseData);
+      toast.success('Course updated successfully');
+      fetchInstructorCourses();
+    } catch (err) {
+      toast.error('Failed to update course');
+    }
+  };
+
   const value = useMemo(
     () => ({
       instructorCourses,
@@ -49,6 +60,7 @@ export const InstructorProvider = ({ children }) => {
       fetchInstructorCourses,
       submitCourse,
       handleDeleteCourse,
+      handleUpdateCourse,
     }),
     [instructorCourses, loading, error]
   );
