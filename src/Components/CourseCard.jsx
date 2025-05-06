@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useCourse } from '../Context/CourseContext';
+import DOMPurify from 'dompurify';
 
 const CourseCard = ({ course }) => {
   const navigate = useNavigate();
@@ -26,6 +27,9 @@ const CourseCard = ({ course }) => {
     }
   };
 
+  // Sanitize the course description
+  const sanitizedDescription = DOMPurify.sanitize(course.description);
+
   return (
     <div
       onClick={handleCardClick}
@@ -40,9 +44,11 @@ const CourseCard = ({ course }) => {
         <h3 className="text-2xl font-bold text-purple-700 text-center group-hover:text-purple-900 transition">{course.title}</h3>
       </div>
 
-      <p className="text-sm text-purple-800 leading-relaxed mb-4">
-        {course.description}
-      </p>
+      {/* Render sanitized description */}
+      <p
+        className="text-sm text-purple-800 leading-relaxed mb-4"
+        dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
+      />
 
       <div className="flex items-center justify-between mt-auto">
         <div className="flex items-center text-sm text-gray-700"></div>

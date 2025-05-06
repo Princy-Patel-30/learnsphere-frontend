@@ -24,7 +24,7 @@ function App() {
         <Navbar />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Register />} />
+          <Route path = '/' element={<LandingPage/>}/>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route
@@ -49,7 +49,6 @@ function App() {
             <Route path="/course-sessions/:courseId" element={<Sessions />} />
             <Route path="/my-progress" element={<MyProgress />} />
             <Route path="/select-role" element={<SelectRole/>} />
-            <Route path = '/landing' element={<LandingPage/>}/>
             <Route path="/create-course" element={<CreateCourse />} />
             <Route path = "/AnalyticsDashboard" element = {<ViewAnalysis/>}/>
           </Routes>

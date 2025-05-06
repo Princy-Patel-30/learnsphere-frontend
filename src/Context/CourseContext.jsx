@@ -114,7 +114,7 @@ export const CourseProvider = ({ children }) => {
 
   const enrollInCourse = async (courseId) => {
     await apiEnroll(courseId);
-    setEnrolledCourses([]);
+    setEnrolledCourses([]); // Clear to force refresh
   };
 
   // ============================

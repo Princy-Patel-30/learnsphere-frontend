@@ -9,12 +9,14 @@ import {
   FileText,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import RatingModal from './RatingModal';
 
 const MyProgress = () => {
   const { fetchEnrolledCourses, fetchCourseProgress } = useCourse();
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [progressMap, setProgressMap] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
 
   useEffect(() => {
     const loadProgress = async () => {
@@ -134,18 +136,32 @@ const MyProgress = () => {
                   </p>
                 </div>
 
-                <Link
-                  to={`/courses/${course.id}`}
-                  className="mt-auto inline-flex items-center text-sm text-purple-700 hover:text-purple-900 font-medium"
-                >
-                  View Course Details
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
+                <div className="mt-auto flex items-center justify-between">
+                  <Link
+                    to={`/courses/${course.id}`}
+                    className="inline-flex items-center text-sm text-purple-700 hover:text-purple-900 font-medium"
+                  >
+                    View Course Details
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                  <button
+                    onClick={() => setSelectedCourseId(course.id)}
+                    className="inline-flex items-center text-sm text-purple-700 hover:text-purple-900 font-medium"
+                  >
+                    Rate Course
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       )}
+
+      <RatingModal
+        isOpen={!!selectedCourseId}
+        onClose={() => setSelectedCourseId(null)}
+        courseId={selectedCourseId}
+      />
     </div>
   );
 };

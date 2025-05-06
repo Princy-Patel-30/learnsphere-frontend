@@ -11,7 +11,6 @@ const DashboardProtectedRoute = ({ children, allowedRoles }) => {
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/select-role" replace />;
   }
-
   return children;
 };
 

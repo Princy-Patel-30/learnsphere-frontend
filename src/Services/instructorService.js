@@ -19,29 +19,14 @@ export const deleteCourse = async (courseId) => {
   await api.delete(`/courses/${courseId}`, { withCredentials: true });
 };
 
+// Analytics endpoints
 export const getAnalytics = async () => {
   const response = await api.get('/instructor/analytics', { withCredentials: true });
   return response.data;
 };
 
 export const getCourseAnalytics = async (courseId) => {
-  const response = await api.get(`/instructor/analytics/course/${courseId}`, { withCredentials: true });
-  return response.data;
-};
-
-export const getStudentAnalytics = async (userId) => {
-  const response = await api.get(`/instructor/analytics/student/${userId}`, { withCredentials: true });
-  return response.data;
-};
-
-export const getRatingsOverTime = async (startDate, endDate) => {
-  const params = {};
-  if (startDate) params.startDate = startDate;
-  if (endDate) params.endDate = endDate;
-  const response = await api.get('/instructor/analytics/ratings-over-time', {
-    params,
-    withCredentials: true,
-  });
+  const response = await api.get(`/instructor/analytics/courses/${courseId}`, { withCredentials: true });
   return response.data;
 };
 
