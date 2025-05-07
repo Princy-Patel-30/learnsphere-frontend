@@ -85,8 +85,8 @@ const InstructorDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+      <div className="flex justify){:center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-purple-500"></div>
       </div>
     );
   }
@@ -108,11 +108,11 @@ const InstructorDashboard = () => {
         message="Are you sure you want to delete this course? This action cannot be undone."
       />
 
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-semibold text-gray-800">Your Courses</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+        <h1 className="text-3xl font-bold text-purple-800">Your Courses</h1>
         <button
           onClick={handleCreateCourse}
-          className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
+          className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-xl shadow-md hover:bg-purple-700 transition"
         >
           <BookPlus size={20} />
           Create Course
@@ -120,35 +120,44 @@ const InstructorDashboard = () => {
       </div>
 
       {instructorCourses.length === 0 ? (
-        <div className="text-center bg-white p-6 rounded-lg shadow-md">
-          <p className="text-lg text-gray-600">You haven't created any courses yet. Start creating now!</p>
+        <div className="text-center bg-white p-6 rounded-xl shadow-md border border-purple-100">
+          <p className="text-lg text-gray-600">
+            You haven't created any courses yet. Start creating now!
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {instructorCourses.map((course) => (
             <div
               key={course.id}
-              className="relative bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              className="relative bg-purple-100 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group cursor-pointer"
             >
-              <div className="absolute top-3 right-3 flex gap-2">
+              <span className="absolute top-4 right-4 text-xs font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full flex items-center space-x-1">
+                <BookPlus className="w-4 h-4" />
+                <span>{course.category}</span>
+              </span>
+              <div className="absolute top-4 left-4 flex gap-3">
                 <button
                   onClick={() => handleUpdateCourse(course)}
-                  className="text-gray-400 hover:text-blue-600 transition-colors duration-200"
+                  className="text-purple-600 hover:text-purple-800 transition"
                 >
                   <Edit2 size={20} />
                 </button>
                 <button
                   onClick={() => confirmDelete(course.id)}
-                  className="text-gray-400 hover:text-red-600 transition-colors duration-200"
+                  className="text-purple-600 hover:text-red-600 transition"
                 >
                   <Trash2 size={20} />
                 </button>
               </div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-3">{course.title}</h2>
-              <div className="mb-4 text-sm text-gray-700 prose">
+              <div className="bg-gray-50 px-4 py-4 rounded-lg mt-16 mb-4 border border-purple-200">
+                <h2 className="text-xl font-bold text-purple-700 text-center group-hover:text-purple-900 transition line-clamp-2">
+                  {course.title}
+                </h2>
+              </div>
+              <div className="text-sm text-purple-800 leading-relaxed mb-4 prose max-w-full line-clamp-3">
                 {parse(DOMPurify.sanitize(course.description))}
               </div>
-              <p className="text-xs text-purple-500">Category: {course.category}</p>
             </div>
           ))}
         </div>
